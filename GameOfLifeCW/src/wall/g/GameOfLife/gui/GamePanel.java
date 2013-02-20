@@ -28,6 +28,7 @@ public class GamePanel extends JPanel{
 	private Game game;
 	
 	public GamePanel(Game game){
+		//tits
 		setGame(game);
 		setHeight(game.getHeight());
 		setWidth(game.getWidth());
