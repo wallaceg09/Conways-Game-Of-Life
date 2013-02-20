@@ -76,7 +76,7 @@ public class MainGUI extends JFrame implements ActionListener {
 			public void run() {
 			
 //				for(int i = 0; i < 100000; i++){
-				while(!paused){//consider adding a timer to slow the progression down to visualize
+				while(!paused){//
 					updateGame();
 //					game.update();
 					
@@ -102,14 +102,14 @@ public class MainGUI extends JFrame implements ActionListener {
 	
 		
 //		initCellGridPanel();
-		gamePanel = new GamePanel(this.game);
-		gamePanel.setBorder(BorderFactory.createLineBorder(Color.red));
+		gamePanel = new GamePanel(this.game);//FIXME: something is wrong with this. Probably in the GamePanel.java file
+		gamePanel.setBorder(BorderFactory.createLineBorder(Color.red));//FIXME: The border isn't even showing up
 		
 		
-		bufferPanel = new JPanel();
+		bufferPanel = new JPanel();//bufferPanel prevents the frame's layout manager from interfering with the sizing of the gamePanel
 		bufferPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		
-//		bufferPanel.add(cellGridPanel);
+//		bufferPanel.add(cellGridPanel);//remnant of a previous attempt at displaying the game
 		
 		bufferPanel.add(gamePanel);
 		
@@ -130,7 +130,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		stop.addActionListener(this);
 		stop.setEnabled(false);
 		
-		buttonPanel = new JPanel();
+		buttonPanel = new JPanel();//holds all my buttons
 		
 		buttonPanel.add(iterate);
 		buttonPanel.add(start);
@@ -144,7 +144,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 	}
 	
-	private void initCellGridPanel(){
+	private void initCellGridPanel(){//older way of displaying the game using a grid of jpanels. Slow and sloppy, just the way I like it.
 		
 		cellGridPanel = new JPanel();
 		cellGridPanel.setLayout(new GridLayout(height, width));
@@ -169,7 +169,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 	}
 	
-	private void updateVisual(){//iterates through each of the JPanel's and determines if the cell in this position is alive or dead.
+	private void updateVisual(){//iterates through each of the JPanel's and determines if the cell in this position is alive or dead. --Won't be used--
 		for(int row = 0; row < height; row++){
 			for( int col = 0; col < width; col++){
 				if(game.isAlive(row, col)){
@@ -195,7 +195,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		game = new Game(width, height);
 	}
 	
-//	private void run(){//locking up the thread
+//	private void run(){//locking up the thread --not going to be used--
 //		
 //		while(!paused){
 //			timer.start();
@@ -209,16 +209,16 @@ public class MainGUI extends JFrame implements ActionListener {
 		Object source = e.getSource();
 		
 		
-		if(source == iterate){
+		if(source == iterate){//update the game once.
 			if(paused){
 				updateGame();
 				
 			}
-		}else if(source == start){//need to find a way to thread this.
+		}else if(source == start){//update the game until the stop button is pressed
 			paused = false;
 //			run();
 //			Runnable gameLoop = new Runnable() {
-//			.start();
+
 			gameLogic.start();
 			SwingUtilities.invokeLater(new Runnable() {
 				
@@ -230,8 +230,6 @@ public class MainGUI extends JFrame implements ActionListener {
 			});
 		}else if(source == stop){
 			paused = true;
-//			gameLogic.;
-			
 		
 		}
 		

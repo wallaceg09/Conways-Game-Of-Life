@@ -15,20 +15,21 @@ import wall.g.GameOfLife.game.Game;
 
 public class GamePanel extends JPanel{
 	
-	private static final int CELL_SIZE = 2;
+	private static final int CELL_SIZE = 10;//The size of a single cell. Play around with this to make the cells different sizes. -NOTE: making this smaller increases the number of cells displayed but doesn't change the size of the panel (bug)
 	private static final Color ALIVE = Color.white;
 	private static final Color DEAD = Color.black;
 	
 //	private Rectangle2D[][] rectangleMap;//ommitting
-	private int columns;
-	private int rows;
+	
+	private int columns;//basically the horizontal number of cells from the Game object
+	private int rows;//basically the vertical number of cells from the Game object
 	
 //	private Graphics graphics;//omitting
 	
-	private Game game;
+	private Game game;//Game object recieved from the GUI calling it
 	
 	public GamePanel(Game game){
-		//tits
+
 		setGame(game);
 		setHeight(game.getHeight());
 		setWidth(game.getWidth());
@@ -38,10 +39,10 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void initialize(){
-		Dimension gameDimension = new Dimension(columns * CELL_SIZE, rows * CELL_SIZE);
-		this.setSize(gameDimension);
-		this.setLayout(new FlowLayout());
-//		this.setPreferredSize(gameDimension);
+		Dimension gameDimension = new Dimension(columns * CELL_SIZE, rows * CELL_SIZE);//created as a dimension to make it easier to see this value in the debugger. 
+		this.setSize(gameDimension);//FIXME: This value displays correctly in the debugger however the size doesn't change no matter what.
+//		this.setLayout(new FlowLayout());//thought adding a layout manager might help. It did not
+//		this.setPreferredSize(gameDimension);//this changed nothing.
 		
 	}
 	@Override
@@ -49,7 +50,7 @@ public class GamePanel extends JPanel{
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
-		for(int row = 0; row < rows; row++){
+		for(int row = 0; row < rows; row++){//iterate through each cell in the game and create a rectangle 
 			for(int col = 0; col < columns; col++){
 				if(game.isAlive(row, col)){
 					g2.setColor(ALIVE);
