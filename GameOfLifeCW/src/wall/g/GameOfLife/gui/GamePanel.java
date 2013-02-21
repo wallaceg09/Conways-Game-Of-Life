@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,6 +25,8 @@ public class GamePanel extends JPanel{
 	private int columns;//basically the horizontal number of cells from the Game object
 	private int rows;//basically the vertical number of cells from the Game object
 	
+	private BufferedImage image;
+	
 //	private Graphics graphics;//omitting
 	
 	private Game game;//Game object recieved from the GUI calling it
@@ -35,15 +38,54 @@ public class GamePanel extends JPanel{
 		setWidth(game.getWidth());
 		
 		initialize();
+		System.out.println(this.getSize());
 		this.setVisible(true);
 	}
 	
 	public void initialize(){
 		Dimension gameDimension = new Dimension(columns * CELL_SIZE, rows * CELL_SIZE);//created as a dimension to make it easier to see this value in the debugger. 
-		this.setSize(gameDimension);//FIXME: This value displays correctly in the debugger however the size doesn't change no matter what.
+		image = new BufferedImage(gameDimension.width, gameDimension.height, BufferedImage.TYPE_USHORT_GRAY);
+		this.setSize(gameDimension);
+		this.setPreferredSize(gameDimension);
 //		this.setLayout(new FlowLayout());//thought adding a layout manager might help. It did not
 //		this.setPreferredSize(gameDimension);//this changed nothing.
 		
+	}
+	@Override
+	public void paintComponent(Graphics g){
+		super.paintComponents(g);
+		
+
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setClip(0, 0, columns*CELL_SIZE, rows*CELL_SIZE);
+		Graphics buf = image.createGraphics();
+		for(int row = 0; row < rows; row++){//iterate through each cell in the game and create a rectangle 
+			for(int col = 0; col < columns; col++){
+				if(game.isAlive(row, col)){
+					buf.setColor(ALIVE);
+				
+				}else{
+					buf.setColor(DEAD);
+				}
+								
+				buf.fillRect(	col*CELL_SIZE, 	//x position
+								row*CELL_SIZE,	//y position
+								CELL_SIZE,		//width
+								CELL_SIZE);		//height
+			}
+		}
+		g2.drawImage(image, 0, 0, null);
+	
+		
+	}
+	public void updateImage(){
+//		this.paintComponent(getGraphics());
+	
+//		this.setVisible(true);
+
+		this.repaint();
+		this.revalidate();
+		this.setVisible(true);
 	}
 //	@Override
 //	public void paint(Graphics g){

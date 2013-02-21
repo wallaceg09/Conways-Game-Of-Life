@@ -68,6 +68,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		initializeGame();
 		
 		initComponents();
+		this.pack();
 		this.setVisible(true);
 		
 		gameLogic = new Thread(new Runnable() {//creates a new thread for the game AI to allow it to work in the background and not affect the GUI
@@ -103,7 +104,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 //		initCellGridPanel();
 		gamePanel = new GamePanel(this.game);//FIXME: something is wrong with this. Probably in the GamePanel.java file
-		gamePanel.setBorder(BorderFactory.createLineBorder(Color.red));//FIXME: The border isn't even showing up
+//		gamePanel.setBorder(BorderFactory.createLineBorder(Color.red));//FIXME: The border isn't even showing up
 		
 		
 		bufferPanel = new JPanel();//bufferPanel prevents the frame's layout manager from interfering with the sizing of the gamePanel
@@ -120,7 +121,7 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 		iterate = new JButton("Iterate once");
 		iterate.addActionListener(this);
-		iterate.setEnabled(false);
+		iterate.setEnabled(true);
 		
 		start = new JButton("Start");
 		start.addActionListener(this);
@@ -187,7 +188,11 @@ public class MainGUI extends JFrame implements ActionListener {
 	
 	private void updateGame(){
 		game.update();
-		updateVisual();
+//		updateVisual();
+		
+		gamePanel.updateImage();
+
+		
 	
 	}
 	
