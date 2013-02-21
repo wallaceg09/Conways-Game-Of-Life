@@ -45,28 +45,28 @@ public class GamePanel extends JPanel{
 //		this.setPreferredSize(gameDimension);//this changed nothing.
 		
 	}
-	@Override
-	public void paint(Graphics g){
-		
-		Graphics2D g2 = (Graphics2D) g;
-		
-		for(int row = 0; row < rows; row++){//iterate through each cell in the game and create a rectangle 
-			for(int col = 0; col < columns; col++){
-				if(game.isAlive(row, col)){
-					g2.setColor(ALIVE);
-					
-				}else{
-					g2.setColor(DEAD);
-				}
-								
-				g2.fillRect(	col*CELL_SIZE, 	//x position
-								row*CELL_SIZE,	//y position
-								CELL_SIZE,		//width
-								CELL_SIZE);		//height
-			}
-		}
-		
-	}
+//	@Override
+//	public void paint(Graphics g){
+//		
+//		Graphics2D g2 = (Graphics2D) g;
+//		
+//		for(int row = 0; row < rows; row++){//iterate through each cell in the game and create a rectangle 
+//			for(int col = 0; col < columns; col++){
+//				if(game.isAlive(row, col)){
+//					g2.setColor(ALIVE);
+//					
+//				}else{
+//					g2.setColor(DEAD);
+//				}
+//								
+//				g2.fillRect(	col*CELL_SIZE, 	//x position
+//								row*CELL_SIZE,	//y position
+//								CELL_SIZE,		//width
+//								CELL_SIZE);		//height
+//			}
+//		}
+//		
+//	}
 	
 	
 	//Setters and getters
