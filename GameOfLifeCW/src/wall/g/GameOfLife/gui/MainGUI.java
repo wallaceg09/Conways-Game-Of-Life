@@ -2,8 +2,10 @@ package wall.g.GameOfLife.gui;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -13,33 +15,39 @@ import wall.g.GameOfLife.game.Game;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 public class MainGUI extends JFrame implements ActionListener {
 	
 	private static final Color ALIVE = Color.white;
 	private static final Color DEAD = Color.black;
 	
-	private static final Dimension CELL_SIZE = new Dimension(2,2);
+	private static final Dimension CELL_SIZE = new Dimension(2,2);	//for grid-layout jpanels. Not to be used for the buffered image
+	private static final int CELL_SIZE_BUF = 5;						//for the buffered image
 	
-	private int width, height;//game variables for determining how many cells to have
+	private int width, height;		//game variables for determining how many cells to have
 	
-	private JPanel cellGridPanel;//This holds the grid-layout to display the cells
-	private JPanel bufferPanel;//this is a buffer to keep the layout manager of the contentpane from messing with the cellGridLayout
+	private JPanel cellGridPanel;	//This holds the grid-layout to display the cells
+	private JPanel bufferPanel;		//this is a buffer to keep the layout manager of the contentpane from messing with the cellGridLayout
 	
-	private JPanel[][] cellMatrix;//this holds the colored JPanels that represent the cells
+	private JPanel[][] cellMatrix;	//this holds the colored JPanels that represent the cells
 	
-	private JPanel buttonPanel;//holds the buttons in a group
+	private JPanel buttonPanel;		//holds the buttons in a group
 	
 	private GamePanel gamePanel;
 	
-	private JButton iterate;//allows the user to calculate just one iteration 
+	private JButton iterate;		//allows the user to calculate just one iteration 
 	
-	private JButton start;//begins running the game continuously
+	private JButton start;			//begins running the game continuously
 	
-	private JButton stop;//stops the game from iterating further.
+	private JButton stop;			//stops the game from iterating further.
+	
+	private JLabel canvasLabel; 	//going to try painting the bufferedImage onto this as an icon...
+	private BufferedImage canvas; 	//this is the image that the graphics will be drawn to
 	
 	
 	private Game game;
@@ -80,6 +88,8 @@ public class MainGUI extends JFrame implements ActionListener {
 				while(!paused){//
 					updateGame();
 //					game.update();
+
+					updateBufferedImage();
 					
 					try {
 						gameLogic.sleep(20);
@@ -91,6 +101,8 @@ public class MainGUI extends JFrame implements ActionListener {
 			}
 		});
 		
+	
+		
 		
 	}
 	
@@ -100,10 +112,15 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
 		
+		canvas = new BufferedImage(game.getWidth() * CELL_SIZE_BUF, game.getHeight() * CELL_SIZE_BUF, BufferedImage.TYPE_USHORT_GRAY);
+		updateBufferedImage();
+		
+		canvasLabel = new JLabel(new ImageIcon(canvas));
+		
 	
 		
 //		initCellGridPanel();
-		gamePanel = new GamePanel(this.game);//FIXME: something is wrong with this. Probably in the GamePanel.java file
+//		gamePanel = new GamePanel(this.game);//FIXME: something is wrong with this. Probably in the GamePanel.java file
 //		gamePanel.setBorder(BorderFactory.createLineBorder(Color.red));//FIXME: The border isn't even showing up
 		
 		
@@ -112,7 +129,9 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 //		bufferPanel.add(cellGridPanel);//remnant of a previous attempt at displaying the game
 		
-		bufferPanel.add(gamePanel);
+//		bufferPanel.add(gamePanel);
+		
+		bufferPanel.add(canvasLabel);
 		
 		
 //		bufferPanel.setPreferredSize(new Dimension((width*CELL_SIZE.width)+5, (height*CELL_SIZE.height)+5));
@@ -125,11 +144,11 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 		start = new JButton("Start");
 		start.addActionListener(this);
-		start.setEnabled(false);
+		start.setEnabled(true);
 		
 		stop = new JButton("Stop");
 		stop.addActionListener(this);
-		stop.setEnabled(false);
+		stop.setEnabled(true);
 		
 		buttonPanel = new JPanel();//holds all my buttons
 		
@@ -186,11 +205,36 @@ public class MainGUI extends JFrame implements ActionListener {
 		
 	}
 	
+	private void updateBufferedImage(){
+		Graphics g = canvas.getGraphics();
+		if(game.rand.nextInt(100)%2 == 0){
+			g.setColor(Color.red);
+		}else{
+			g.setColor(Color.green);
+		}
+		for(int row = 0; row < game.getHeight(); row++){//iterate through each cell in the game and create a rectangle 
+			for(int col = 0; col < game.getWidth(); col++){
+				if(game.isAlive(row, col)){
+					g.setColor(ALIVE);
+				
+				}else{
+					g.setColor(DEAD);
+				}
+								
+				g.fillRect(		col*CELL_SIZE_BUF, 	//x position
+								row*CELL_SIZE_BUF,	//y position
+								CELL_SIZE_BUF,			//width
+								CELL_SIZE_BUF);			//height
+			}
+		}
+		repaint();
+	}
+	
 	private void updateGame(){
 		game.update();
 //		updateVisual();
 		
-		gamePanel.updateImage();
+//		gamePanel.updateImage();
 
 		
 	
@@ -217,22 +261,16 @@ public class MainGUI extends JFrame implements ActionListener {
 		if(source == iterate){//update the game once.
 			if(paused){
 				updateGame();
+				updateBufferedImage();
 				
 			}
 		}else if(source == start){//update the game until the stop button is pressed
 			paused = false;
 //			run();
 //			Runnable gameLoop = new Runnable() {
-
 			gameLogic.start();
-			SwingUtilities.invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					updateVisual();
-					
-				}
-			});
+			
+			
 		}else if(source == stop){
 			paused = true;
 		
